@@ -28,10 +28,8 @@ jobs:
         run: |
            if [[ "${{ github.event.head_commit.message }}" == "hotfix" ]]; then
             echo "Commit message contains 'hotfix'. Skipping linter..."
-            touch SKIP_LINTER
-          else
-            echo "Commit message doesn't contain 'hotfix'. Running linter..."
-          fi       
+            touch SKIP_LINTE
+           fi       
       # Runs a single command using the runners shell
       - name: lint
         if: !contains(github.event.head_commit.message, 'SKIP_LINTER')
