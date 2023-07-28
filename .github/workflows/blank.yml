@@ -24,21 +24,35 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
-      - name: Check commit message
+#       - name: Check commit message
+#         run: |
+#            if [[ "${{ github.event.head_commit.message }}" == "hotfix" ]]; then
+#             echo "Commit message contains 'hotfix'. Skipping linter..."
+#             touch SKIP_LINTE
+#            fi       
+#       # Runs a single command using the runners shell
+#       - name: lint
+#         if: !contains(github.event.head_commit.message, 'SKIP_LINTER')
+#         uses: golangci/golangci-lint-action@v3
+#         with:
+#           version: v1.51.0
+#           args: --timeout 10m
+#           skip-pkg-cache: true
+#           skip-build-cache: true
+      - name: Check commit message and run golangci-lint
         run: |
-           if [[ "${{ github.event.head_commit.message }}" == "hotfix" ]]; then
-            echo "Commit message contains 'hotfix'. Skipping linter..."
-            touch SKIP_LINTE
-           fi       
-      # Runs a single command using the runners shell
-      - name: lint
-        if: !contains(github.event.head_commit.message, 'SKIP_LINTER')
-        uses: golangci/golangci-lint-action@v3
-        with:
-          version: v1.51.0
-          args: --timeout 10m
-          skip-pkg-cache: true
-          skip-build-cache: true
+          if echo "${{ github.event.head_commit.message }}" | grep -i -q "hotfix"; then
+            echo "Commit message contains 'hotfix'. Skipping golangci-lint..."
+            touch SKIP_LINTER
+          else
+            echo "Commit message doesn't contain 'hotfix'. Running golangci-lint..."
+            golangci/golangci-lint-action@v3
+            with:
+              version: v1.51.0
+              args: --timeout 10m
+              skip-pkg-cache: true
+              skip-build-cache: true
+          fi
               
 
       # Runs a set of commands using the runners shell
