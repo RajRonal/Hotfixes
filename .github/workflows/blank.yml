@@ -30,7 +30,7 @@ jobs:
         
         run: |
           if [[ "${{github.event.head_commit.message}}" != "hotfix" ]]; then
-              echo "hello lint"
+              return 
           fi
               
 
